@@ -85,27 +85,17 @@ class OrderController extends Controller
             $total += $item['harga'] * $item['qty'];
         }
 
-        // simpan pesanan
-        $id_pesanan = DB::getPdo()
-            ->query("SELECT seq_pesanan.NEXTVAL FROM dual")
-            ->fetchColumn();
-
-        DB::table('PESANAN')->insert([
-            'id_pesanan' => $id_pesanan,
+        // simpan pesanan (MySQL auto-increment)
+        $id_pesanan = DB::table('PESANAN')->insertGetId([
             'id_user' => $id_user,
             'tanggal_pesan' => now(),
             'total_harga' => $total,
             'status_pesanan' => 'pending'
-        ]);
+        ], 'id_pesanan');
 
-        // simpan detail pesanan
+        // simpan detail pesanan (MySQL auto-increment)
         foreach ($cart as $item) {
-            $id_detail = DB::getPdo()
-                ->query("SELECT seq_detail.NEXTVAL FROM dual")
-                ->fetchColumn();
-
             DB::table('DETAIL_PESANAN')->insert([
-                'id_detail' => $id_detail,
                 'id_pesanan' => $id_pesanan,
                 'id_menu' => $item['id_menu'],
                 'jumlah' => $item['qty'],
@@ -130,13 +120,8 @@ class OrderController extends Controller
             }
         }
 
-        // simpan pembayaran
-        $id_pembayaran = DB::getPdo()
-            ->query("SELECT seq_pembayaran.NEXTVAL FROM dual")
-            ->fetchColumn();
-
+        // simpan pembayaran (MySQL auto-increment)
         DB::table('PEMBAYARAN')->insert([
-            'id_pembayaran' => $id_pembayaran,
             'id_pesanan' => $id_pesanan,
             'metode_pembayaran' => $request->metode_pembayaran,
             'bukti_bayar' => $namaFile,

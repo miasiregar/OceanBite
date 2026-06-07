@@ -21,7 +21,6 @@ class AuthController extends Controller
     public function store(Request $request)
     {
         DB::table('USERS')->insert([
-            'ID_USER' => DB::raw('seq_users.NEXTVAL'),
             'USERNAME' => $request->username,
             'PASSWORD' => bcrypt($request->password),
             'NAMA_LENGKAP' => $request->nama_lengkap,
@@ -29,7 +28,17 @@ class AuthController extends Controller
             'ROLE' => 'user'
         ]);
 
-        return redirect('/login');
+        // Auto-login: fetch the newly created user and set session
+        $user = DB::table('USERS')
+            ->where('USERNAME', $request->username)
+            ->first();
+
+        Session::put('user', $user);
+        Session::put('user_id', $user->id_user);
+        Session::put('username', $user->username);
+        Session::put('role', $user->role);
+
+        return redirect('/dashboard');
     }
 
     public function authenticate(Request $request)

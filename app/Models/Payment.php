@@ -6,13 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-    protected $table = 'payments';
-    protected $primaryKey = 'id';
+    protected $table = 'pembayaran';
+    protected $primaryKey = 'id_pembayaran';
     public $timestamps = false;
 
     protected $fillable = [
-        'order_id',
-        'metode_bayar',
-        'status_bayar'
+        'id_pesanan',
+        'metode_pembayaran',
+        'bukti_bayar',
+        'status_verifikasi'
     ];
+
+    public function pesanan()
+    {
+        return $this->belongsTo(Order::class, 'id_pesanan', 'id_pesanan');
+    }
 }

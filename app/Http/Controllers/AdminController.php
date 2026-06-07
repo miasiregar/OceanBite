@@ -120,7 +120,6 @@ class AdminController extends Controller
         );
 
         DB::table('MENU')->insert([
-            'id_menu' => DB::raw('seq_menu.NEXTVAL'),
             'nama_menu' => $request->nama_menu,
             'harga' => $request->harga,
             'stok' => $request->stok,
