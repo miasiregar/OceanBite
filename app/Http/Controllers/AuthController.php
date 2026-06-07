@@ -20,38 +20,33 @@ class AuthController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Ubah nama tabel dan kolom menjadi huruf kecil
-        DB::table('users')->insert([
-            'username' => $request->username,
-            'password' => bcrypt($request->password),
-            'nama_lengkap' => $request->nama_lengkap,
-            'no_hp' => $request->no_hp,
-            'role' => 'user'
+        DB::table('USERS')->insert([
+            'USERNAME' => $request->username,
+            'PASSWORD' => bcrypt($request->password),
+            'NAMA_LENGKAP' => $request->nama_lengkap,
+            'NO_HP' => $request->no_hp,
+            'ROLE' => 'user'
         ]);
 
         // Auto-login: fetch the newly created user and set session
-        // 2. Ubah nama tabel dan kolom pencarian menjadi huruf kecil
-        $user = DB::table('users')
-            ->where('username', $request->username)
+        $user = DB::table('USERS')
+            ->where('USERNAME', $request->username)
             ->first();
 
-        // Object $user yang didapat dari MySQL propertinya sudah lowercase, ini sudah benar
         Session::put('user', $user);
-        Session::put('user_id', $user->id_user);
-        Session::put('username', $user->username);
-        Session::put('role', $user->role);
+        Session::put('user_id', $user->ID_USER);
+        Session::put('username', $user->USERNAME);
+        Session::put('role', $user->ROLE);
 
         return redirect('/dashboard');
     }
 
     public function authenticate(Request $request)
     {
-        // 3. Ubah nama tabel dan kolom pencarian menjadi huruf kecil
-        $user = DB::table('users')
-            ->where('username', $request->username)
+        $user = DB::table('USERS')
+            ->where('USERNAME', $request->username)
             ->first();
 
-        // password_verify akan membandingkan input text biasa dengan hash bcrypt di MySQL
         if ($user && password_verify($request->password, $user->password)) {
 
             Session::put('user', $user);
@@ -64,7 +59,7 @@ class AuthController extends Controller
 
         return back()->with(
             'error',
-            'Login gagal. Periksa kembali username dan password Anda.'
+            'Login gagal'
         );
     }
 

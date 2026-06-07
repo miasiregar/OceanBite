@@ -15,7 +15,7 @@ class OrderController extends Controller
             return redirect('/login');
         }
 
-        $orders = DB::table('PESANAN')
+        $orders = DB::table('pesanan')
             ->where('id_user', $user->id_user)
             ->orderBy('id_pesanan', 'desc')
             ->get();
@@ -86,7 +86,7 @@ class OrderController extends Controller
         }
 
         // simpan pesanan (MySQL auto-increment)
-        $id_pesanan = DB::table('PESANAN')->insertGetId([
+        $id_pesanan = DB::table('pesanan')->insertGetId([
             'id_user' => $id_user,
             'tanggal_pesan' => now(),
             'total_harga' => $total,
@@ -95,7 +95,7 @@ class OrderController extends Controller
 
         // simpan detail pesanan (MySQL auto-increment)
         foreach ($cart as $item) {
-            DB::table('DETAIL_PESANAN')->insert([
+            DB::table('detail_pesanan')->insert([
                 'id_pesanan' => $id_pesanan,
                 'id_menu' => $item['id_menu'],
                 'jumlah' => $item['qty'],
@@ -121,7 +121,7 @@ class OrderController extends Controller
         }
 
         // simpan pembayaran (MySQL auto-increment)
-        DB::table('PEMBAYARAN')->insert([
+        DB::table('pembayaran')->insert([
             'id_pesanan' => $id_pesanan,
             'metode_pembayaran' => $request->metode_pembayaran,
             'bukti_bayar' => $namaFile,
@@ -140,24 +140,24 @@ class OrderController extends Controller
 
     public function invoice($id)
     {
-        $pesanan = DB::table('PESANAN')
+        $pesanan = DB::table('pesanan')
             ->where('id_pesanan', $id)
             ->first();
 
-        $detail = DB::table('DETAIL_PESANAN')
+        $detail = DB::table('detail_pesanan')
             ->join(
-                'MENU',
-                'DETAIL_PESANAN.id_menu',
+                'menu',
+                'detail_pesanan.id_menu',
                 '=',
-                'MENU.id_menu'
+                'menu.id_menu'
             )
             ->where(
-                'DETAIL_PESANAN.id_pesanan',
+                'detail_pesanan.id_pesanan',
                 $id
             )
             ->get();
 
-        $pembayaran = DB::table('PEMBAYARAN')
+        $pembayaran = DB::table('pembayaran')
             ->where('id_pesanan', $id)
             ->first();
 

@@ -8,7 +8,7 @@ class CartController extends Controller
 {
     public function add($id)
     {
-        $menu = DB::table('MENU')
+        $menu = DB::table('menu')
             ->where('id_menu', $id)
             ->first();
 

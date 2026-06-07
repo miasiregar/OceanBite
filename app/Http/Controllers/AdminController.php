@@ -14,9 +14,9 @@ class AdminController extends Controller
     */
     public function index()
     {
-        $users = DB::table('USERS')->count();
-        $menu = DB::table('MENU')->count();
-        $orders = DB::table('PESANAN')->count();
+        $users = DB::table('users')->count();
+        $menu = DB::table('menu')->count();
+        $orders = DB::table('pesanan')->count();
 
         $page = 'dashboard';
 
@@ -35,7 +35,7 @@ class AdminController extends Controller
     */
     public function users()
     {
-        $users = DB::table('USERS')->get();
+        $users = DB::table('users')->get();
 
         $page = 'users';
 
@@ -52,7 +52,7 @@ class AdminController extends Controller
     */
     public function menu()
     {
-        $menu = DB::table('MENU')->get();
+        $menu = DB::table('menu')->get();
 
         $page = 'menu';
 
@@ -69,20 +69,20 @@ class AdminController extends Controller
     */
     public function orders()
     {
-        $orders = DB::table('PESANAN')
+        $orders = DB::table('pesanan')
             ->join(
-                'PEMBAYARAN',
-                'PESANAN.id_pesanan',
+                'pembayaran',
+                'pesanan.id_pesanan',
                 '=',
-                'PEMBAYARAN.id_pesanan'
+                'pembayaran.id_pesanan'
             )
             ->select(
-                'PESANAN.*',
-                'PEMBAYARAN.metode_pembayaran',
-                'PEMBAYARAN.status_verifikasi',
-                'PEMBAYARAN.bukti_bayar'
+                'pesanan.*',
+                'pembayaran.metode_pembayaran',
+                'pembayaran.status_verifikasi',
+                'pembayaran.bukti_bayar'
             )
-            ->orderBy('PESANAN.id_pesanan', 'desc')
+            ->orderBy('pesanan.id_pesanan', 'desc')
             ->get();
 
         $page = 'orders';
@@ -119,7 +119,7 @@ class AdminController extends Controller
             $namaGambar
         );
 
-        DB::table('MENU')->insert([
+        DB::table('menu')->insert([
             'nama_menu' => $request->nama_menu,
             'harga' => $request->harga,
             'stok' => $request->stok,
@@ -137,7 +137,7 @@ class AdminController extends Controller
     */
     public function editMenu($id)
     {
-        $menu = DB::table('MENU')
+        $menu = DB::table('menu')
             ->where('id_menu', $id)
             ->first();
 
@@ -174,7 +174,7 @@ class AdminController extends Controller
             $data['gambar'] = $namaGambar;
         }
 
-        DB::table('MENU')
+        DB::table('menu')
             ->where('id_menu', $id)
             ->update($data);
 
@@ -188,7 +188,7 @@ class AdminController extends Controller
     */
     public function deleteMenu($id)
     {
-        DB::table('MENU')
+        DB::table('menu')
             ->where('id_menu', $id)
             ->delete();
 
@@ -202,13 +202,13 @@ class AdminController extends Controller
     */
     public function confirmOrder($id)
     {
-        DB::table('PESANAN')
+        DB::table('pesanan')
             ->where('id_pesanan', $id)
             ->update([
                 'status_pesanan' => 'success'
             ]);
 
-        DB::table('PEMBAYARAN')
+        DB::table('pembayaran')
             ->where('id_pesanan', $id)
             ->update([
                 'status_verifikasi' => 'verified'

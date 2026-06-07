@@ -25,7 +25,7 @@ class MenuController extends Controller
             return redirect('/login');
         }
 
-        $menus = DB::table('MENU')->get();
+        $menus = DB::table('menu')->get();
 
         return view('menu', compact('menus'));
     }
@@ -38,7 +38,7 @@ class MenuController extends Controller
             return redirect('/login');
         }
 
-        $menu = DB::table('MENU')
+        $menu = DB::table('menu')
             ->where('id_menu', $id)
             ->first();
 
