@@ -20,19 +20,22 @@ class AuthController extends Controller
 
     public function store(Request $request)
     {
-        DB::table('USERS')->insert([
-            'USERNAME' => $request->username,
-            'PASSWORD' => bcrypt($request->password),
-            'NAMA_LENGKAP' => $request->nama_lengkap,
-            'NO_HP' => $request->no_hp,
-            'ROLE' => 'user'
+        // 1. Ubah nama tabel dan kolom menjadi huruf kecil
+        DB::table('users')->insert([
+            'username' => $request->username,
+            'password' => bcrypt($request->password),
+            'nama_lengkap' => $request->nama_lengkap,
+            'no_hp' => $request->no_hp,
+            'role' => 'user'
         ]);
 
         // Auto-login: fetch the newly created user and set session
-        $user = DB::table('USERS')
-            ->where('USERNAME', $request->username)
+        // 2. Ubah nama tabel dan kolom pencarian menjadi huruf kecil
+        $user = DB::table('users')
+            ->where('username', $request->username)
             ->first();
 
+        // Object $user yang didapat dari MySQL propertinya sudah lowercase, ini sudah benar
         Session::put('user', $user);
         Session::put('user_id', $user->id_user);
         Session::put('username', $user->username);
@@ -43,10 +46,12 @@ class AuthController extends Controller
 
     public function authenticate(Request $request)
     {
-        $user = DB::table('USERS')
-            ->where('USERNAME', $request->username)
+        // 3. Ubah nama tabel dan kolom pencarian menjadi huruf kecil
+        $user = DB::table('users')
+            ->where('username', $request->username)
             ->first();
 
+        // password_verify akan membandingkan input text biasa dengan hash bcrypt di MySQL
         if ($user && password_verify($request->password, $user->password)) {
 
             Session::put('user', $user);
@@ -59,7 +64,7 @@ class AuthController extends Controller
 
         return back()->with(
             'error',
-            'Login gagal'
+            'Login gagal. Periksa kembali username dan password Anda.'
         );
     }
 
